@@ -1,0 +1,53 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: hibernate
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    command:
+      - postgres
+      - -cmax_locks_per_transaction=1024
+      - -cmax_connections=500
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    shm_size: 512m
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 6G
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hibernate
+
+  liquibase:
+    image: liquibase/liquibase:3.10
+    depends_on:
+      - postgres
+    networks:
+      - hibernate
+    volumes:
+      - ./changelog:/liquibase/changelog
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    command:
+      - --url=jdbc:postgresql://postgres:5432/hibernate
+      - --username=postgres
+      - --password=password
+      - --logLevel=SQL
+      - --changeLogFile=/changelog/liquibase/changelog-local.xml
+      - update
+
+networks:
+  hibernate:

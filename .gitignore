@@ -1,0 +1,23 @@
+#git ignore list
+#ignore all class files
+*.class
+#ignore idea configs
+*.iml
+*//*.iml
+#ignore all target folders
+target/
+/.idea/
+
+.*.sql
+.*.bat
+.*.xml
+.*.xsd
+.gradle
+.idea
+gradle.properties
+.*.lst
+.*.log
+.release
+USER_INSTALL_ROOT_IS_UNDEFINED
+unitils-local.properties
+config-local.properties
